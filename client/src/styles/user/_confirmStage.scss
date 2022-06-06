@@ -1,0 +1,9 @@
+.confirm {
+  margin: 25rem auto;
+  width: 90rem;
+  text-align: center;
+
+  &__txt, &__desc {
+    margin-top: 2rem;
+  }
+}

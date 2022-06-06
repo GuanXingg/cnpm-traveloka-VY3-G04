@@ -41,11 +41,11 @@ CREATE TABLE isPartner (
 
 
 CREATE TABLE hoa_don (
-  ma_hoa_don int IDENTITY(1,1) not null ,
+  ma_hoa_don int not null ,
   ma_khach_di int ,
   email nvarchar(200),
   ma_chuyen_di int ,
-  ngay_dat_ve nvarchar(10) ,
+  ngay_dat_ve nvarchar(200) ,
   ngay_bat_dau nvarchar(200),
   so_luong int,
   tong_tien int ,
@@ -87,20 +87,20 @@ create table xe(
   partner_id nvarchar(200)  ,
   so_xe nvarchar(200), 
   hang_xe nvarchar(200),
-  --hinh_anh nvarchar(200),
+  hinh_anh nvarchar(250),
   so_ghe nvarchar(200),
   --don_gia nvarchar(200)
 )
 CREATE TABLE chuyen_di (
   ma_chuyen_di int Identity(1,1) not null,
-	ma_xe nvarchar(200), 
+  ma_xe nvarchar(200), 
   noi_di nvarchar(200) ,
   noi_trung_gian nvarchar(200),
   noi_den nvarchar(200) ,
-  ngay_bat_dau date ,
-  ngay_ket_thuc date ,
-  gio_bat_dau time ,
-  gio_ket_thuc time ,
+  ngay_bat_dau nvarchar(200) ,
+  ngay_ket_thuc nvarchar(200) ,
+  gio_bat_dau nvarchar(200) ,
+  gio_ket_thuc nvarchar(200) ,
   so_luong int ,
   hanh_ly int ,
   don_gia int,

@@ -60,13 +60,12 @@ class UsersController {
 				const ma_hoa_don = Math.floor(100000 + Math.random() * 900000);
 
 				const pool = await conn;
-				const sqlString2 = `SELECT * FROM khach_di`;
+				const sqlString2 = `SELECT * FROM khach_di where CMND=@CMND`;
 				return await pool
 					.request()
+					.input('CMND', sql.NVarChar, formData.CMND)
 					.query(sqlString2, async function (err, data2) {
-						if (!data2) {
-							res.json({ msg: 'CMND đã tồn tại' });
-						} else {
+						if (!data2.recordset.length > 0) {
 							const sqlString =
 								'INSERT INTO khach_di(ten_khach_di,diachiKH,CMND,dienthoaiKH,gioitinh,ngaysinh,ma_chuyen_bay) Values (@ten_khach_di,@diachiKH,@CMND,@dienthoaiKH,@gioitinh,@ngaysinh,@ma_chuyen_bay) ';
 							return await pool
@@ -95,6 +94,8 @@ class UsersController {
 											});
 									}
 								});
+						} else {
+							res.json({ msg: 'CMND đã tồn tại' });
 						}
 					});
 			} catch (err) {
@@ -114,47 +115,50 @@ class UsersController {
 			const ma_hoa_don = req.body.ma_hoa_don;
 			const ma_khach_di = req.params.idKhach;
 			const ma_chuyen_di = req.params.idChuyen;
+			const email = req.body.email;
 			const tong_tien = req.body.tong_tien;
-			const accessToken = req.headers.token.split(' ')[1];
-			const decoded = jwt.verify(accessToken, accessKey);
+			// const accessToken = req.headers.token.split(" ")[1];
+			// const decoded = jwt.verify(accessToken, accessKey);
 			const trang_thai_dat = req.body.trang_thai_dat;
-			const ngay_dat_ve = new Date();
+			const ngay_dat_ve = req.body.ngay_dat_ve;
+			const ngay_bat_dau = req.body.ngay_bat_dau;
+			const so_luong = req.body.so_luong;
+			const pool = await conn;
 			const sqlString2 =
-				'INSERT INTO hoa_don (ma_hoa_don,ma_khach_di,ma_chuyen_di,email,ngay_dat_ve ,ngay_bat_dau,trang_thai_dat,so_luong,tong_tien) VALUES(@(ma_hoa_don,@ma_khach_di, @ma_chuyen_di,@email, @ngay_dat_ve, @ngay_bat_dau,@trang_thai_dat,@so_luong,@tong_tien)';
-			return (
-				pool
-					.request()
-					.input('ma_hoa_don', sql.Int, ma_hoa_don)
-					.input('ma_khach_di', sql.Int, ma_khach_di)
-					.input('ma_chuyen_di', sql.Int, ma_chuyen_di)
-					.input('email', sql.NVarChar, decoded.email) //data1.ma_khach_dat
-					.input('ngay_dat_ve', sql.Date, ngay_dat_ve)
-					.input('ngay_bat_dau', sql.NVarChar, req.body.ngay_bat_dau)
-					.input('trang_thai_dat', sql.NVarChar, trang_thai_dat)
-					.input('so_luong', sql.Int, req.body.so_luong)
-					.input('tong_tien', sql.Int, tong_tien)
-					// .input("phuong_thuc", sql.NVarChar, formData.phuong_thuc)
-					.query(sqlString2, async function (err3, data3) {
-						if (!err3) {
-							const sqlString3 = `UPDATE chuyen_di SET  so_luong='so_luong - ${req.body.so_luong}' Where ma_chuyen_di='${ma_chuyen_di}'`;
-							return pool
-								.request()
-								.query(sqlString3, async function (err4, data4) {
-									if (err4) {
-										console.log(err4);
-									} else {
-										res.json({
-											msg: 'Thêm hóa đơn thành công',
-											result: data4,
-											data3,
-										});
-									}
-								});
-						} else {
-							console.log(err3);
-						}
-					})
-			);
+				'INSERT INTO hoa_don (ma_hoa_don,ma_khach_di,ma_chuyen_di,email,ngay_dat_ve ,ngay_bat_dau,trang_thai_dat,so_luong,tong_tien) VALUES(@ma_hoa_don,@ma_khach_di, @ma_chuyen_di,@email, @ngay_dat_ve, @ngay_bat_dau,@trang_thai_dat,@so_luong,@tong_tien)';
+			return await pool
+				.request()
+				.input('ma_hoa_don', sql.Int, ma_hoa_don)
+				.input('ma_khach_di', sql.Int, ma_khach_di)
+				.input('ma_chuyen_di', sql.Int, ma_chuyen_di)
+				.input('email', sql.NVarChar, email)
+				.input('ngay_dat_ve', sql.NVarChar, ngay_dat_ve)
+				.input('ngay_bat_dau', sql.NVarChar, ngay_bat_dau)
+				.input('trang_thai_dat', sql.NVarChar, trang_thai_dat)
+				.input('so_luong', sql.Int, so_luong)
+				.input('tong_tien', sql.Int, tong_tien)
+				.query(sqlString2, async function (err2, data2) {
+					if (!err2) {
+						const sqlString3 = `UPDATE chuyen_di SET so_luong=so_luong - @so_luong Where ma_chuyen_di=@ma_chuyen_di`;
+						return await pool
+							.request()
+							.input('so_luong', sql.Int, so_luong)
+							.input('ma_chuyen_di', sql.Int, ma_chuyen_di)
+							.query(sqlString3, async function (err3, data3) {
+								if (err3) {
+									console.log(err3);
+								} else {
+									res.json({
+										msg: 'Thêm hóa đơn thành công',
+										result: data3,
+										data2,
+									});
+								}
+							});
+					} else {
+						console.log(err2);
+					}
+				});
 		} catch (err) {
 			console.log(err);
 		}
