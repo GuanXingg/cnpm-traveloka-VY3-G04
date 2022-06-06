@@ -1,0 +1,667 @@
+{
+	"info": {
+		"_postman_id": "4a0d9c34-b44b-45e5-b5cc-809dd6c853c1",
+		"name": "Voucher",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20057276"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"3009\",\r\n    \"email\": \"quanhung309@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{voucher domain}}/api/v1/user/auth/register",
+							"host": [
+								"{{voucher domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Danh sách voucher khả dụng",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "user_id",
+								"value": "3009",
+								"type": "text"
+							},
+							{
+								"key": "partner_id",
+								"value": "9a852710-b9bc-4028-ae92-655cca44f971",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.votuan.xyz/api/v1/user/voucher/eligible?typeVoucher=Transfer",
+							"protocol": "https",
+							"host": [
+								"api",
+								"votuan",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"voucher",
+								"eligible"
+							],
+							"query": [
+								{
+									"key": "typeVoucher",
+									"value": "Transfer"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kiểm tra voucher đó có đủ điều kiện sử dụng hay không",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "user_id",
+								"value": "3009",
+								"type": "text"
+							},
+							{
+								"key": "partner_id",
+								"value": "37c6e292-6404-4de3-a299-0d8ae074b118",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/user/voucher/check-condition?amount=900000&code=duadonsanbay3009&typeVoucher=dua-don",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"voucher",
+								"check-condition"
+							],
+							"query": [
+								{
+									"key": "amount",
+									"value": "900000"
+								},
+								{
+									"key": "code",
+									"value": "duadonsanbay3009"
+								},
+								{
+									"key": "typeVoucher",
+									"value": "dua-don"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Áp dụng voucher",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "user_id",
+								"value": "3009",
+								"type": "text"
+							},
+							{
+								"key": "partner_id",
+								"value": "37c6e292-6404-4de3-a299-0d8ae074b118",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"duadonsanbay3009\",\n    \"typeVoucher\": \"dua-don\",\n    \"transactionId\": \"1536875\",\n    \"amount\" : 900000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/user/voucher/pre-order",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"voucher",
+								"pre-order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cập nhập trạng thái voucher",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "user_id",
+								"value": "3009",
+								"type": "text"
+							},
+							{
+								"key": "partner_id",
+								"value": "37c6e292-6404-4de3-a299-0d8ae074b118",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"typeVoucher\": \"dua-don\",\n    \"orderId\": \"b69a2bd666e080c0850214d9463dd681c3048b3dc22cefda5b1893acbbd254f5\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/user/voucher/state",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"voucher",
+								"state"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hủy giao dịch đã áp mã",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "user_id",
+								"value": "123",
+								"type": "text"
+							},
+							{
+								"key": "partner_id",
+								"value": "f9a643c0-5ca5-4248-af81-1ce186b3d6f1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"typeVoucher\": \"tour\",\n    \"orderId\": \"438e7e9a-17e8-4558-9160-8d39f1aa4963:TOUR123111:e7adedfe-19cd-44ec-9f85-fe3addd2bdfe:334343\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/user/voucher/cancel-order",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"voucher",
+								"cancel-order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mua voucher",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "user_id",
+								"value": "123",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"HANOI10\",\n    \"typeVoucher\": \"hotel\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/user/voucher/buy",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"voucher",
+								"buy"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Partner",
+			"item": [
+				{
+					"name": "Gift Card",
+					"item": [
+						{
+							"name": "List gift card of partner",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "secret_key",
+										"value": "profile",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/partner/gift-card",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"partner",
+										"gift-card"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create gift card",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "secret_key",
+										"value": "profile",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Thẻ thanh toán giam gia\",\n    \"content\": \"OKEE\",\n    \"limitUse\": 10,\n    \"giftCardCode\": \"TESTw12\",\n    \"limitDay\": 20,\n    \"effectiveAt\": \"2022-04-17T09:35:14.946Z\",\n    \"expirationAt\": \"2022-04-17T09:36:14.946Z\",\n    \"typeGift\": \"PERCENT\",\n    \"discount\": 12,\n    \"pointExchange\": 100\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/partner/gift-card",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"partner",
+										"gift-card"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Voucher",
+					"item": [
+						{
+							"name": "List voucher of Partner",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "secret_key",
+										"value": "QUTsxNH7xZ",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/partner/voucher?type=hotel",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"partner",
+										"voucher"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "hotel"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Tạo voucher",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiMzI0MjNkNjgtOTg5MC00M2MyLWFjMWMtZWIxYzkxYzc4MmE4In0sImlhdCI6MTY1MjcxNDM3NiwiZXhwIjoxNjYwNDkwMzc2fQ._wPPROQCU3H0DqprvM1cIwuk9zbLlho3effs07DosOA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "secret_key",
+										"value": "QUTsxNH7xZ",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Tour nha trang\",\n    \"content\": \"Tour\",\n    \"limitUse\": 10,\n    \"voucherCode\": \"TOUR2d\",\n    \"amount\": 50000,\n    \"effectiveAt\": \"2022-05-01\",\n    \"expirationAt\": \"2022-05-30\",\n    \"threshold\": 500000,\n    \"discount\": 20,\n    \"maxAmount\": 20000,\n    \"type\": \"tour\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/partner/voucher",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"partner",
+										"voucher"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Danh sách type voucher",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiMzI0MjNkNjgtOTg5MC00M2MyLWFjMWMtZWIxYzkxYzc4MmE4In0sImlhdCI6MTY1MjcxNDM3NiwiZXhwIjoxNjYwNDkwMzc2fQ._wPPROQCU3H0DqprvM1cIwuk9zbLlho3effs07DosOA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "secret_key",
+										"value": "QUTsxNH7xZ",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/partner/voucher/type-voucher",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"partner",
+										"voucher",
+										"type-voucher"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cập nhập trạng thái đã sử dụng của customer",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "secret_key",
+										"value": "hotel",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"DANANG20\",\n    \"userId\": \"123\",\n    \"transactionId\": \"1232323\",\n    \"amount\": \"200000\",\n    \"amountAfter\": \"30000\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/partner/voucher/user",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"partner",
+										"voucher",
+										"user"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Tạo partner",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"tour\",\n    \"password\": \"tour\",\n    \"typeVouchers\": [\"hotel\", \"tour\", \"abc\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/partner/auth/register",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"partner",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tạo loại voucher",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Tour du lịch\",\n    \"type\": \"tour\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/v1/type-voucher",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"type-voucher"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "secret_key",
+			"value": "QUTsxNH7xZ",
+			"type": "string"
+		}
+	]
+}

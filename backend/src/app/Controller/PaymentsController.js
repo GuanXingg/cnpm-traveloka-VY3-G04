@@ -223,7 +223,7 @@ class PaymentsController {
                             msg: 'Thêm hóa đơn thành công',
                             result: data4,
                             data3,
-                          });
+                          }); 
                         }
                       });
                   } else {

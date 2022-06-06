@@ -2,7 +2,7 @@ import { FaBars } from 'react-icons/fa';
 import '../styles/_header.scss';
 
 const ItemTop = (props) => {
-	const {icon, type, ...rest} = props;
+	const { icon, type, ...rest } = props;
 
 	const goToHomepage = () => window.location.assign(props.homelink);
 
@@ -31,6 +31,9 @@ const ItemTop = (props) => {
 					<props.icon className="header-top__icn" />
 					<span className="header-top__label">{props.label}</span>
 				</>
+			)}
+			{type === 'login' && (
+				<span className="header-top__label">{props.label}</span>
 			)}
 		</div>
 	);

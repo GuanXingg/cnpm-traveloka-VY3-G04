@@ -4,7 +4,7 @@ const config = {
 	server: `localhost\\G24`,
 	user: 'sa',
 	password: '123456',
-	database: 'airport_tranfer_2',
+	database: 'airport_tranfer',
 	driver: 'msnodesqlv8',
 };
 
