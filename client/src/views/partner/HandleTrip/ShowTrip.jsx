@@ -106,55 +106,112 @@ const ManageTrips = () => {
 						</tr>
 					</thead>
 					<tbody className="manage__body">
-						{apiDataTrip.data.length === 0 ? (
+						{apiDataTrip.data.length === 0 &&
+						apiDataTrip.data.some((item) => item.isBought !== 'success') ? (
 							<tr>
 								<td>
 									<EmptyData admin />
 								</td>
 							</tr>
 						) : (
-							apiDataTrip.data.map((trip, index) => (
-								<tr key={index}>
-									<td>{index + 1}</td>
-									<td className="manage__col--11">{trip.ma_chuyen_di}</td>
-									<td className="manage__col--11">{trip.ma_xe}</td>
-									<td className="manage__col--11">{trip.noi_di}</td>
-									<td className="manage__col--11">{trip.noi_trung_gian}</td>
-									<td className="manage__col--11">{trip.noi_den}</td>
-									<td className="manage__col--11">
-										{moment(trip.ngay_bat_dau).format('DD/MM/yyyy')}
-									</td>
-									<td className="manage__col--11">
-										{moment(trip.ngay_ket_thuc).format('DD/MM/yyyy')}
-									</td>
-									<td className="manage__col--11">
-										{trip.gio_bat_dau.slice(0, 5)}
-									</td>
-									<td className="manage__col--11">
-										{trip.gio_ket_thuc.slice(0, 5)}
-									</td>
-									<td className="manage__col--11">{trip.hanh_ly}</td>
-									<td className="manage__col--11">
-										{trip.don_gia.toLocaleString()}
-									</td>
-									<td>
-										<button
-											className="manage__btn"
-											onClick={() => toggleEdit(trip)}
-										>
-											<MdModeEditOutline className="manage__btn--edit" />
-										</button>
-									</td>
-									<td>
-										<button
-											className="manage__btn"
-											onClick={() => deleteOneTrip(trip.ma_chuyen_di)}
-										>
-											<MdDelete className="manage__btn--delete" />
-										</button>
-									</td>
-								</tr>
-							))
+							apiDataTrip.data.map((trip, index) => {
+								if (trip.isBought !== 'success')
+									return (
+										<tr key={index}>
+											<td>{index + 1}</td>
+											<td className="manage__col--11">{trip.ma_chuyen_di}</td>
+											<td className="manage__col--11">{trip.ma_xe}</td>
+											<td className="manage__col--11">{trip.noi_di}</td>
+											<td className="manage__col--11">{trip.noi_trung_gian}</td>
+											<td className="manage__col--11">{trip.noi_den}</td>
+											<td className="manage__col--11">
+												{moment(trip.ngay_bat_dau).format('DD/MM/yyyy')}
+											</td>
+											<td className="manage__col--11">
+												{moment(trip.ngay_ket_thuc).format('DD/MM/yyyy')}
+											</td>
+											<td className="manage__col--11">
+												{trip.gio_bat_dau.slice(0, 5)}
+											</td>
+											<td className="manage__col--11">
+												{trip.gio_ket_thuc.slice(0, 5)}
+											</td>
+											<td className="manage__col--11">{trip.hanh_ly}</td>
+											<td className="manage__col--11">
+												{trip.don_gia.toLocaleString()}
+											</td>
+											<td>
+												<button
+													className="manage__btn"
+													onClick={() => toggleEdit(trip)}
+												>
+													<MdModeEditOutline className="manage__btn--edit" />
+												</button>
+											</td>
+											<td>
+												<button
+													className="manage__btn"
+													onClick={() => deleteOneTrip(trip.ma_chuyen_di)}
+												>
+													<MdDelete className="manage__btn--delete" />
+												</button>
+											</td>
+										</tr>
+									);
+							})
+						)}
+					</tbody>
+				</table>
+			</div>
+			<div className="manage">
+				<h2 className="manage__textCenter">Các chuyến đã được đặt</h2>
+				<table className="manage__table manage__table--booked">
+					<thead className="manage__head">
+						<tr>
+							<th>STT</th>
+							{arrTableHead.map((head, index) => (
+								<th key={index}>{head}</th>
+							))}
+						</tr>
+					</thead>
+					<tbody className="manage__body">
+						{apiDataTrip.data.length === 0 &&
+						apiDataTrip.data.some((item) => item.isBought === 'success') ? (
+							<tr>
+								<td>
+									<EmptyData admin />
+								</td>
+							</tr>
+						) : (
+							apiDataTrip.data.map((trip, index) => {
+								if (trip.isBought === 'success')
+									return (
+										<tr key={index}>
+											<td>{index + 1}</td>
+											<td className="manage__col--11">{trip.ma_chuyen_di}</td>
+											<td className="manage__col--11">{trip.ma_xe}</td>
+											<td className="manage__col--11">{trip.noi_di}</td>
+											<td className="manage__col--11">{trip.noi_trung_gian}</td>
+											<td className="manage__col--11">{trip.noi_den}</td>
+											<td className="manage__col--11">
+												{moment(trip.ngay_bat_dau).format('DD/MM/yyyy')}
+											</td>
+											<td className="manage__col--11">
+												{moment(trip.ngay_ket_thuc).format('DD/MM/yyyy')}
+											</td>
+											<td className="manage__col--11">
+												{trip.gio_bat_dau.slice(0, 5)}
+											</td>
+											<td className="manage__col--11">
+												{trip.gio_ket_thuc.slice(0, 5)}
+											</td>
+											<td className="manage__col--11">{trip.hanh_ly}</td>
+											<td className="manage__col--11">
+												{trip.don_gia.toLocaleString()}
+											</td>
+										</tr>
+									);
+							})
 						)}
 					</tbody>
 				</table>

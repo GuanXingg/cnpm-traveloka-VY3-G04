@@ -6,7 +6,7 @@ const getVoucher = () => {
 		url: `${process.env.REACT_APP_API_VOUCHER}/api/v1/user/voucher/eligible?typeVoucher=AIRPORT`,
 		headers: {
 			user_id: '3009',
-			partner_id: '9a852710-b9bc-4028-ae92-655cca44f971',
+			partner_id: 'CA93E2B2-BB04-4667-AFAB-50BCE73A0EAE',
 		},
 	});
 };
@@ -17,7 +17,7 @@ const checkVoucher = (amount, codeVoucher) => {
 		url: `${process.env.REACT_APP_API_VOUCHER}/api/v1/user/voucher/check-condition?amount=${amount}&code=${codeVoucher}&typeVoucher=AIRPORT`,
 		headers: {
 			user_id: '3009',
-			partner_id: '9a852710-b9bc-4028-ae92-655cca44f971',
+			partner_id: 'CA93E2B2-BB04-4667-AFAB-50BCE73A0EAE',
 		},
 	});
 };
@@ -28,7 +28,7 @@ const applyVoucher = (amount, code, transactionId) => {
 		url: `${process.env.REACT_APP_API_VOUCHER}/api/v1/user/voucher/pre-order`,
 		headers: {
 			user_id: '3009',
-			partner_id: '37c6e292-6404-4de3-a299-0d8ae074b118',
+			partner_id: 'CA93E2B2-BB04-4667-AFAB-50BCE73A0EAE',
 		},
 		data: {
 			code,

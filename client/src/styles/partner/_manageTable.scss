@@ -10,11 +10,24 @@
 	box-shadow: 0 0 0.8rem c.$border-color;
 	background-color: #fff;
 
+	& + & {
+		margin-top: 2rem;
+	}
+
+	&__textCenter {
+		margin: 1rem 0;
+		text-align: center;
+	}
+
 	&__table {
 		margin: 8rem 0 5rem;
 		width: 100%;
 		text-align: center;
 		overflow: hidden;
+
+		&--booked {
+			margin-top: 5rem;
+		}
 
 		&,
 		& th,
@@ -29,9 +42,15 @@
 		}
 	}
 
+	&__click {
+		font-weight: bold;
+		color: #3737cf;
+		text-decoration: underline #3737cf solid;
+	}
+
 	&__image {
 		@include m.sizeBox(20rem, 10rem);
-	}	
+	}
 
 	&__img {
 		@include m.sizeBox(100%);

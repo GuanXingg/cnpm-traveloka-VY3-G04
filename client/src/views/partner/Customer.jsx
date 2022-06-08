@@ -1,24 +1,67 @@
+import moment from 'moment';
+import { useState, useEffect } from 'react';
+import { getCustomer } from '../../middlewares/apiStatistical';
 import { LoadingIcon, EmptyData } from '../../components/Status';
+import '../../styles/partner/_manageTable.scss';
 
 const initialApiData = {
 	loading: true,
 	data: [],
+	err: null,
 };
 const arrTableHead = [
-	'Mã chuyến đi',
-	'Mã xe',
-	'Nơi đi',
-	'Nơi trung gian',
-	'Nơi đến',
-	'Ngày bắt đầu',
-	'Ngày kết thúc',
-	'Giờ bắt đầu',
-	'Giờ kết thúc',
-	'Hành lý',
-	'Đơn giá',
+	'Tên khách hàng',
+	'Email',
+	'Giới tính',
+	'Địa chỉ',
+	'Điện thoại',
+	'Ngày sinh',
 ];
 
 const Customer = () => {
+	const [apiData, setApiData] = useState(initialApiData);
+
+	const sessionPAdmin = JSON.parse(sessionStorage.getItem('adminInfo')) || {};
+
+	useEffect(() => {
+		const getCustomers = () => {
+			try {
+				getCustomer()
+					.then((res) => res.data?.result)
+					.then((receiveData) =>
+						setApiData({
+							...apiData,
+							loading: false,
+							data: receiveData,
+						})
+					)
+					.catch((e) => {
+						console.log(e);
+						setApiData({
+							...apiData,
+							err: e,
+						});
+					});
+			} catch (e) {
+				console.log(e);
+				setApiData({
+					...apiData,
+					err: e,
+				});
+			}
+		};
+
+		getCustomers();
+	}, []);
+
+	console.log(apiData.data);
+
+	if (!sessionPAdmin.login) return window.location.assign('/partner');
+	if (apiData.loading) return <LoadingIcon />;
+	if (apiData.err) {
+		console.log(apiData.err);
+		return <EmptyData />;
+	}
 	return (
 		<div className="manage">
 			<table className="manage__table">
@@ -28,58 +71,30 @@ const Customer = () => {
 						{arrTableHead.map((head, index) => (
 							<th key={index}>{head}</th>
 						))}
-						<th colSpan="2">Chức năng</th>
 					</tr>
 				</thead>
 				<tbody className="manage__body">
-					<tr>
-						<td>
-							<EmptyData admin />
-						</td>
-					</tr>
-					{/* apiDataTrip.data.map((trip, index) => (
+					{apiData.data.length === 0 ? (
+						<tr>
+							<td>
+								<EmptyData admin />
+							</td>
+						</tr>
+					) : (
+						apiData.data.map((customer, index) => (
 							<tr key={index}>
 								<td>{index + 1}</td>
-								<td className="manage__col--11">{trip.ma_chuyen_di}</td>
-								<td className="manage__col--11">{trip.ma_xe}</td>
-								<td className="manage__col--11">{trip.noi_di}</td>
-								<td className="manage__col--11">{trip.noi_trung_gian}</td>
-								<td className="manage__col--11">{trip.noi_den}</td>
-								<td className="manage__col--11">
-									{moment(trip.ngay_bat_dau).format('DD/MM/yyyy')}
-								</td>
-								<td className="manage__col--11">
-									{moment(trip.ngay_ket_thuc).format('DD/MM/yyyy')}
-								</td>
-								<td className="manage__col--11">
-									{trip.gio_bat_dau.slice(0, 5)}
-								</td>
-								<td className="manage__col--11">
-									{trip.gio_ket_thuc.slice(0, 5)}
-								</td>
-								<td className="manage__col--11">{trip.hanh_ly}</td>
-								<td className="manage__col--11">
-									{trip.don_gia.toLocaleString()}
-								</td>
-								<td>
-									<button
-										className="manage__btn"
-										onClick={() => toggleEdit(trip)}
-									>
-										<MdModeEditOutline className="manage__btn--edit" />
-									</button>
-								</td>
-								<td>
-									<button
-										className="manage__btn"
-										onClick={() => deleteOneTrip(trip.ma_chuyen_di)}
-									>
-										<MdDelete className="manage__btn--delete" />
-									</button>
+								<td className="manage__col--6">{customer.tenKH}</td>
+								<td className="manage__col--6">{customer.email}</td>
+								<td className="manage__col--6">{customer.gioitinh}</td>
+								<td className="manage__col--6">{customer.diaChiKH}</td>
+								<td className="manage__col--6">{customer.dienthoaiKH}</td>
+								<td className="manage__col--6">
+									{moment(customer.ngaysinh).format('DD/MM/yyyy')}
 								</td>
 							</tr>
 						))
-					)} */}
+					)}
 				</tbody>
 			</table>
 		</div>

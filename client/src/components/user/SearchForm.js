@@ -12,6 +12,8 @@ const schemaValidation = yup.object().shape({
 });
 
 const SearchForm = (props) => {
+	const sessionPSearch = JSON.parse(sessionStorage.getItem('searchTrip'));
+
 	const {
 		register,
 		control,
@@ -36,6 +38,7 @@ const SearchForm = (props) => {
 							name="noi_di"
 							control={control}
 							err={errors.noi_di?.message}
+							defaultValue={sessionPSearch?.noi_di}
 							inputClass="search-form__input"
 							list="noi_di"
 						/>
@@ -51,6 +54,7 @@ const SearchForm = (props) => {
 							name="noi_den"
 							control={control}
 							err={errors.noi_den?.message}
+							defaultValue={sessionPSearch?.noi_den}
 							inputClass="search-form__input"
 							list="noi_den"
 						/>
@@ -65,7 +69,9 @@ const SearchForm = (props) => {
 						<TextField
 							type="date"
 							name="ngay_bat_dau"
-							defaultValue={moment().format('yyyy-MM-DD')}
+							defaultValue={
+								sessionPSearch?.ngay_bat_dau || moment().format('yyyy-MM-DD')
+							}
 							min={moment().format('yyyy-MM-DD')}
 							control={control}
 							inputClass="search-form__input"
@@ -76,7 +82,9 @@ const SearchForm = (props) => {
 						<TextField
 							type="time"
 							name="gio_bat_dau"
-							defaultValue={moment().format('HH:mm')}
+							defaultValue={
+								sessionPSearch?.gio_bat_dau || moment().format('HH:mm')
+							}
 							control={control}
 							inputClass="search-form__input"
 						/>

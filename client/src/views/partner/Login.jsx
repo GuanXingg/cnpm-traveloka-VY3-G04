@@ -30,7 +30,7 @@ const Login = () => {
 				login: true,
 			};
 			sessionStorage.setItem('adminInfo', JSON.stringify(sessionSAdmin));
-			window.location.assign('partner/satistical');
+			window.location.assign('partner/statistical');
 		}
 	};
 

@@ -151,7 +151,7 @@ const HeaderPartner = () => {
 							</ul>
 						</div>
 						<div className="header__item">
-							<Link to="/partner/satistical" className="header-bot__link">
+							<Link to="/partner/statistical" className="header-bot__link">
 								<ItemBotPartner label="Thống kê" />
 							</Link>
 						</div>

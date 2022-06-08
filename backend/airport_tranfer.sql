@@ -23,7 +23,7 @@ CREATE TABLE khach_di (
   ten_khach_di nvarchar(200) ,
   ma_chuyen_bay nvarchar(200),
   diaChiKH nvarchar(200),
-	CMND nvarchar(200) UNIQUE,
+	CMND nvarchar(200),
 	dienthoaiKH nVarchar(200),
 	ngaysinh nvarchar(10),
 	gioitinh nVarchar(10),
@@ -104,6 +104,7 @@ CREATE TABLE chuyen_di (
   so_luong int ,
   hanh_ly int ,
   don_gia int,
+  isBought nvarchar(200),
   --hinh_anh NVARCHAR(200) DEFAULT null ,
 );
 
