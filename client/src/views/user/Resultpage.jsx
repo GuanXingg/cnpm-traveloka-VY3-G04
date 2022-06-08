@@ -16,8 +16,8 @@ const initialData = {
 
 const Resultpage = () => {
 	const [apiData, setApiData] = useState(initialData);
-	const [toggleTab, setToggleTab] = useState(1);
 	const [openSearch, setOpenSearch] = useState(false);
+	const [toggleTab, setToggleTab] = useState(1);
 
 	const handleClick = (number) => setToggleTab(number);
 	const handleOpenSearch = () => setOpenSearch(!openSearch);
@@ -40,6 +40,7 @@ const Resultpage = () => {
 					loading: false,
 					data: res.data.result,
 				});
+				await setToggleTab(res.data.result[0]?.ma_loai[0]);
 			} catch (e) {
 				setApiData({
 					...apiData,

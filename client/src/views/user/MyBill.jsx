@@ -1,15 +1,27 @@
+import moment from 'moment';
 import { useState, useEffect } from 'react';
 import { RiBillLine, RiCheckboxCircleFill } from 'react-icons/ri';
 import { GiCityCar } from 'react-icons/gi';
 import NoBillIcon from '../../assets/icons/cancel.png';
+import { showHistory } from '../../middlewares/apiUser';
 import '../../styles/user/_bill.scss';
 
 const sessionPBill = JSON.parse(sessionStorage.getItem('bill')) || {};
 
 const { ma_hoa_don, noi_di, tong_tien, trang_thai_dat } = sessionPBill;
 
+const initialApiData = {
+	loading: false,
+	data: [],
+	err: null,
+};
+const initalBill = {
+	status: false,
+	data: {},
+};
+
 const OwnBill = () => {
-	const [nav, setNav] = useState(1);
+	const [nav, setNav] = useState(trang_thai_dat === 'success' ? 2 : 1);
 
 	return (
 		<div className="bill">
@@ -41,105 +53,159 @@ const OwnBill = () => {
 	);
 };
 
-const HaveBill = () => {
-	const [openBill, setOpenBill] = useState(false);
-  
-	const toggleOpenBill = () => setOpenBill(!openBill);
-
-	return (
-		<>
+const NoBill = () => {
+	if (trang_thai_dat === 'pending')
+		return (
 			<div className="bill-content__item bill-content__item--yes">
 				<div className="bill-content__summary">
 					<div className="bill-content__code">
-						Mã đặt chỗ
+						Mã đặt chỗ{' '}
 						<h3 className="bill-content__numberCode">{ma_hoa_don}</h3>
 					</div>
-					<h3 className="bill-content__price">VND</h3>
+					<h3 className="bill-content__price">
+						{tong_tien.toLocaleString()} VND
+					</h3>
 				</div>
 				<div className="bill-content__trip">
 					<GiCityCar />
 					<span className="bill-content__fromDes">Từ {noi_di}</span>
 				</div>
 				<div className="bill-content__direct">
-					<span className="bill-content__wait bill-content__wait--success">
-						Thanh toán thành công
+					<span className="bill-content__wait">
+						Đang đợi chọn phương thức thanh toán
 					</span>
-					<div className="bill-content__link" onClick={() => toggleOpenBill()}>
-						Xem tất cả
-					</div>
+					<a
+						href="/stage/payment"
+						className="bill-content__link"
+						onClick={() => sessionStorage.removeItem('billStatus')}
+					>
+						Tiếp tục
+					</a>
 				</div>
 			</div>
-			{openBill && <ModelBill setOpenBill={toggleOpenBill} />}
-		</>
-	);
-	// else
-	// 	return (
-	// 		<div className="bill-content__item bill-content__item--no">
-	// 			<div className="bill-content__image">
-	// 				<img src={NoBillIcon} alt="No bill" className="bill-content__img" />
-	// 			</div>
-	// 			<div className="bill-content__announce">
-	// 				<h4 className="bill-content__title">
-	// 					Không có giao dịch đang tiến hành
-	// 				</h4>
-	// 				<p className="bill-content__txt">
-	// 					Bạn không có giao dịch đang tiến hành nào từ phiên giao dịch trước.
-	// 					Những giao dịch chưa hoàn thành sẽ được lưu tại đây.
-	// 				</p>
-	// 			</div>
-	// 		</div>
-	// 	);
-};
-
-const NoBill = () => {
+		);
 	return (
-		<div className="bill-content__item bill-content__item--yes">
-			<div className="bill-content__summary">
-				<div className="bill-content__code">
-					Mã đặt chỗ <h3 className="bill-content__numberCode">{ma_hoa_don}</h3>
-				</div>
-				<h3 className="bill-content__price">
-					{tong_tien.toLocaleString()} VND
-				</h3>
+		<div className="bill-content__item bill-content__item--no">
+			<div className="bill-content__image">
+				<img src={NoBillIcon} alt="No bill" className="bill-content__img" />
 			</div>
-			<div className="bill-content__trip">
-				<GiCityCar />
-				<span className="bill-content__fromDes">Từ {noi_di}</span>
-			</div>
-			<div className="bill-content__direct">
-				<span className="bill-content__wait">
-					Đang đợi chọn phương thức thanh toán
-				</span>
-				<a
-					href="/stage/payment"
-					className="bill-content__link"
-					onClick={() => sessionStorage.removeItem('billStatus')}
-				>
-					Tiếp tục
-				</a>
+			<div className="bill-content__announce">
+				<h4 className="bill-content__title">
+					Không có giao dịch đang tiến hành
+				</h4>
+				<p className="bill-content__txt">
+					Bạn không có giao dịch đang tiến hành nào từ phiên giao dịch trước.
+					Những giao dịch chưa hoàn thành sẽ được lưu tại đây.
+				</p>
 			</div>
 		</div>
 	);
-	// else
-	// 	return (
-	// 		<div className="bill-content__item bill-content__item--no">
-	// 			<div className="bill-content__image">
-	// 				<img src={NoBillIcon} alt="No bill" className="bill-content__img" />
-	// 			</div>
-	// 			<div className="bill-content__announce">
-	// 				<h4 className="bill-content__title">
-	// 					Không có giao dịch đang tiến hành
-	// 				</h4>
-	// 				<p className="bill-content__txt">
-	// 					Bạn không có giao dịch đang tiến hành nào từ phiên giao dịch trước.
-	// 					Những giao dịch chưa hoàn thành sẽ được lưu tại đây.
-	// 				</p>
-	// 			</div>
-	// 		</div>
-	// 	);
 };
 
-const ModelBill = ({ setOpenBill }) => {
+const HaveBill = () => {
+	const sessionPUser = JSON.parse(sessionStorage.getItem('userInfo'));
+
+	const [openBill, setOpenBill] = useState(false);
+	const [apiData, setApiData] = useState(initialApiData);
+	console.log('~ apiData', apiData);
+
+	const toggleOpenBill = (data) =>
+		setOpenBill({
+			status: !openBill.status,
+			data,
+		});
+
+	useEffect(() => {
+		const getHistory = () => {
+			try {
+				showHistory(sessionPUser.accessToken)
+					.then((res) => res.data.result)
+					.then((receiveData) =>
+						setApiData({
+							...apiData,
+							loading: false,
+							data: receiveData,
+						})
+					)
+					.catch((e) =>
+						setApiData({
+							...apiData,
+							loading: false,
+							err: e,
+						})
+					);
+			} catch (e) {
+				setApiData({
+					...apiData,
+					err: e,
+				});
+			}
+		};
+
+		getHistory();
+	}, []);
+
+	if (
+		apiData?.data[0]?.trang_thai_dat === 'success' &&
+		apiData.data.length !== 0
+	)
+		return (
+			<>
+				{apiData.data.map((item) => (
+					<div
+						key={item.ma_hoa_don}
+						className="bill-content__item bill-content__item--yes"
+					>
+						<div className="bill-content__summary">
+							<div className="bill-content__code">
+								Mã đặt chỗ
+								<h3 className="bill-content__numberCode">{item.ma_hoa_don}</h3>
+							</div>
+							<h3 className="bill-content__price">
+								{item.tong_tien.toLocaleString()}VND
+							</h3>
+						</div>
+						<div className="bill-content__trip">
+							<GiCityCar />
+							<span className="bill-content__fromDes">Từ {item.noi_di}</span>
+						</div>
+						<div className="bill-content__direct">
+							<span className="bill-content__wait bill-content__wait--success">
+								Thanh toán thành công
+							</span>
+							<div
+								className="bill-content__link"
+								onClick={() => toggleOpenBill(item)}
+							>
+								Xem tất cả
+							</div>
+						</div>
+					</div>
+				))}
+				{openBill.status && (
+					<ModelBill dataBill={openBill.data} setOpenBill={toggleOpenBill} />
+				)}
+			</>
+		);
+	return (
+		<div className="bill-content__item bill-content__item--no">
+			<div className="bill-content__image">
+				<img src={NoBillIcon} alt="No bill" className="bill-content__img" />
+			</div>
+			<div className="bill-content__announce">
+				<h4 className="bill-content__title">
+					Không có giao dịch đang tiến hành
+				</h4>
+				<p className="bill-content__txt">
+					Bạn không có giao dịch đang tiến hành nào từ phiên giao dịch trước.
+					Những giao dịch chưa hoàn thành sẽ được lưu tại đây.
+				</p>
+			</div>
+		</div>
+	);
+};
+
+const ModelBill = ({ dataBill, setOpenBill }) => {
 	return (
 		<div className="model" onClick={() => setOpenBill()}>
 			<div className="model__box" onClick={(e) => e.stopPropagation()}>
@@ -155,27 +221,35 @@ const ModelBill = ({ setOpenBill }) => {
 					<div className="model__info">
 						<div className="model__group">
 							<p className="model__field">
-								Mã hóa đơn:<span className="model__value">012345</span>
+								Mã hóa đơn:
+								<span className="model__value">{dataBill.ma_hoa_don}</span>
 							</p>
 							<p className="model__field">
-								Ngày lập hóa đơn:<span className="model__value">1/1/2001</span>
+								Ngày lập hóa đơn:
+								<span className="model__value">{dataBill.ngay_dat_ve}</span>
 							</p>
 						</div>
 						<p className="model__field">
-							Tên khách hàng:<span className="model__value">Huwng</span>
+							Tên khách đi đại diện:
+							<span className="model__value">{dataBill.ten_khach_di}</span>
 						</p>
 						<p className="model__field">
-							Điện thoại:<span className="model__value">01235568</span>
+							Điện thoại:
+							<span className="model__value">{dataBill.dienthoaiKH}</span>
 						</p>
 						<p className="model__field">
-							Số lượng:<span className="model__value">2</span>
+							Số lượng:
+							<span className="model__value">{dataBill.so_luong}</span>
 						</p>
 						<p className="model__field">
 							Phương thức thanh toán:
 							<span className="model__value">Paypal</span>
 						</p>
 						<p className="model__field">
-							Tổng tiền:<span className="model__value">800000</span>
+							Tổng tiền:
+							<span className="model__value">
+								{dataBill.tong_tien.toLocaleString()}đ
+							</span>
 						</p>
 					</div>
 					<p className="model__tableCap">Thông tin chuyến đi:</p>
@@ -190,10 +264,10 @@ const ModelBill = ({ setOpenBill }) => {
 						</thead>
 						<tbody>
 							<tr>
-								<td>Hồ Chí Minh</td>
-								<td>Hồ Chí Minh</td>
-								<td>30/9/2000</td>
-								<td>17:05</td>
+								<td>{dataBill.noi_di}</td>
+								<td>{dataBill.noi_den}</td>
+								<td>{moment(dataBill.ngay_bat_dau).format('DD/MM/yyyy')}</td>
+								<td>{dataBill.gio_bat_dau.slice(0, 5)}</td>
 							</tr>
 						</tbody>
 					</table>

@@ -10,7 +10,6 @@ class UsersController {
 	index(req, res, next) {
 		res.render('stripe');
 	}
-
 	async getAllBooking(req, res, next) {
 		const noi_di = req.query.noi_di;
 		const noi_den = req.query.noi_den;
@@ -60,42 +59,32 @@ class UsersController {
 				const ma_hoa_don = Math.floor(100000 + Math.random() * 900000);
 
 				const pool = await conn;
-				const sqlString2 = `SELECT * FROM khach_di where CMND=@CMND`;
+				const sqlString =
+					'INSERT INTO khach_di(ten_khach_di,diachiKH,CMND,dienthoaiKH,gioitinh,ngaysinh,ma_chuyen_bay) Values (@ten_khach_di,@diachiKH,@CMND,@dienthoaiKH,@gioitinh,@ngaysinh,@ma_chuyen_bay) ';
 				return await pool
 					.request()
+					.input('ten_khach_di', sql.NVarChar, formData.ten_khach_di)
+					.input('ma_chuyen_bay', sql.NVarChar, formData.ma_chuyen_bay)
+					.input('diachiKH', sql.NVarChar, formData.diachiKH)
 					.input('CMND', sql.NVarChar, formData.CMND)
-					.query(sqlString2, async function (err, data2) {
-						if (!data2.recordset.length > 0) {
-							const sqlString =
-								'INSERT INTO khach_di(ten_khach_di,diachiKH,CMND,dienthoaiKH,gioitinh,ngaysinh,ma_chuyen_bay) Values (@ten_khach_di,@diachiKH,@CMND,@dienthoaiKH,@gioitinh,@ngaysinh,@ma_chuyen_bay) ';
+					.input('dienthoaiKH', sql.NVarChar, formData.dienthoaiKH)
+					.input('gioitinh', sql.NVarChar, formData.gioitinh)
+					.input('ngaysinh', sql.NVarChar, formData.ngaysinh)
+					.query(sqlString, async function (err, data1) {
+						if (err) {
+							console.log(err);
+						} else {
+							// res.json({ result: data1 });
+							const pool = await conn;
+							const sqlString2 = `SELECT * FROM khach_di`;
 							return await pool
 								.request()
-								.input('ten_khach_di', sql.NVarChar, formData.ten_khach_di)
-								.input('ma_chuyen_bay', sql.NVarChar, formData.ma_chuyen_bay)
-								.input('diachiKH', sql.NVarChar, formData.diachiKH)
-								.input('CMND', sql.NVarChar, formData.CMND)
-								.input('dienthoaiKH', sql.NVarChar, formData.dienthoaiKH)
-								.input('gioitinh', sql.NVarChar, formData.gioitinh)
-								.input('ngaysinh', sql.NVarChar, formData.ngaysinh)
-								.query(sqlString, async function (err, data1) {
-									if (err) {
-										console.log(err);
-									} else {
-										// res.json({ result: data1 });
-										const pool = await conn;
-										const sqlString2 = `SELECT * FROM khach_di`;
-										return await pool
-											.request()
-											.query(sqlString2, async function (err, data2) {
-												res.json({
-													result: data2.recordset.pop(),
-													ma_hoa_don: ma_hoa_don,
-												});
-											});
-									}
+								.query(sqlString2, async function (err, data2) {
+									res.json({
+										result: data2.recordset.pop(),
+										ma_hoa_don: ma_hoa_don,
+									});
 								});
-						} else {
-							res.json({ msg: 'CMND đã tồn tại' });
 						}
 					});
 			} catch (err) {
@@ -139,7 +128,7 @@ class UsersController {
 				.input('tong_tien', sql.Int, tong_tien)
 				.query(sqlString2, async function (err2, data2) {
 					if (!err2) {
-						const sqlString3 = `UPDATE chuyen_di SET so_luong=so_luong - @so_luong Where ma_chuyen_di=@ma_chuyen_di`;
+						const sqlString3 = `UPDATE chuyen_di SET isBought='success' , so_luong=so_luong-@so_luong Where ma_chuyen_di=@ma_chuyen_di`;
 						return await pool
 							.request()
 							.input('so_luong', sql.Int, so_luong)
@@ -151,7 +140,6 @@ class UsersController {
 									res.json({
 										msg: 'Thêm hóa đơn thành công',
 										result: data3,
-										data2,
 									});
 								}
 							});
@@ -194,15 +182,31 @@ class UsersController {
 		}
 	}
 
-	async history(req, res) {
-		if (req.headers.token) {
-			const token = req.headers.token.split(' ')[1];
-			const decoded = jwt.verify(token, accessKey);
-			const pool = await conn;
-			const sqlString = `SELECT *, hoa_don.trang_thai_dat AS bookingStatus FROM hoa_don INNER JOIN chuyen_di ON ma_chuyen_di.id = hoa_don.ma_chuyen_di  WHERE userId = ${decoded.userId} ORDER BY ma_hoa_don DESC`;
-			return await pool.request().query(sqlString, async function (err, data) {
-				res.json({ result: data });
-			});
+	async history(req, res, next) {
+		try {
+			if (req.headers.token) {
+				const token = req.headers.token.split(' ')[1];
+				const decoded = jwt.verify(token, accessKey);
+				const pool = await conn;
+				const sqlString = `select h.trang_thai_dat,  k.tenKH ,k.email, d.ten_khach_di , d.dienthoaiKH , h.ngay_dat_ve , h.so_luong, h.tong_tien , h.ma_hoa_don , c.noi_di , c.noi_den , c.ngay_bat_dau ,c.gio_bat_dau
+        from khach_dat k , khach_di d , hoa_don h , chuyen_di c 
+        where k.email=h.email 
+        and d.ma_khach_di=h.ma_khach_di 
+        and h.ma_chuyen_di = c.ma_chuyen_di 
+        and k.email = @email 
+        `;
+				return await pool
+					.request()
+					.input('email', sql.NVarChar, decoded.email)
+					.query(sqlString, async function (err, data) {
+						res.json({ result: data.recordset });
+					});
+			} else {
+				console.log(next);
+				res.json({ msg: 'Người dùng phải đăng nhập!!!' });
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	}
 

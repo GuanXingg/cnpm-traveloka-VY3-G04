@@ -23,25 +23,27 @@ const initialApiVoucher = {
 };
 
 const PaymentStage = () => {
-	const [apiVoucher, setApiVoucher] = useState(initialApiVoucher);
-	const [statusBill, setStatusBill] = useState('pending');
-	const [availableVoucher, setAvailableVoucher] = useState('');
-
 	const sessionPTicket = JSON.parse(sessionStorage.getItem('ticketInfo')) || {};
 	const sessionPPass = JSON.parse(sessionStorage.getItem('passInfo')) || {};
 	const sessionPBill = JSON.parse(sessionStorage.getItem('bill')) || {};
+	console.log('~ sessionPBill', sessionPBill.trang_thai_dat);
+
+	const [apiVoucher, setApiVoucher] = useState(initialApiVoucher);
+	const [availableVoucher, setAvailableVoucher] = useState('');
 
 	const { model, so_luong, gia, noi_di, noi_den, ten_loai } = sessionPTicket;
 	const { ma_hoa_don, ten_khach_di, gioitinh, ma_khach_di } = sessionPPass;
-	const { tong_tien } = sessionPBill;
+	const { tong_tien, tong_tien_cuoi } = sessionPBill;
+	const bookingDateDisplay = moment().format('DD/MM/yyyy');
 	const sumPrice = so_luong * gia;
 	const discountPrice = sumPrice - apiVoucher?.discount;
 	const sessionSBill = {
 		ma_hoa_don,
 		noi_di,
+		ngay_dat_ve: bookingDateDisplay,
 		tong_tien: sumPrice,
 		tong_tien_cuoi: discountPrice,
-		trang_thai_dat: statusBill,
+		trang_thai_dat: 'pending',
 	};
 
 	sessionStorage.setItem('bill', JSON.stringify(sessionSBill));
@@ -100,9 +102,13 @@ const PaymentStage = () => {
 		});
 	};
 	const submitData = () => {
-		setStatusBill('success');
-		sessionSBill.trang_thai_dat = statusBill;
-		sessionStorage.setItem('bill', JSON.stringify(sessionSBill));
+		const sessionSSubBill = {
+			...sessionPBill,
+			trang_thai_dat: 'success',
+		};
+		console.log('~ sessionSBill', sessionSSubBill);
+
+		sessionStorage.setItem('bill', JSON.stringify(sessionSSubBill));
 
 		const uploadData = {
 			ma_hoa_don,
@@ -113,7 +119,7 @@ const PaymentStage = () => {
 			ngay_bat_dau: sessionPTicket.ngay_bat_dau,
 			trang_thai_dat: 'success',
 			so_luong,
-			tong_tien,
+			tong_tien: tong_tien_cuoi,
 		};
 
 		uploadPassInfo2(
@@ -122,7 +128,6 @@ const PaymentStage = () => {
 			uploadData,
 			JSON.parse(sessionStorage.getItem('userInfo')).accessToken
 		);
-		console.log(uploadData);
 		window.location.assign('/stage/confirm');
 	};
 
@@ -192,16 +197,16 @@ const PaymentStage = () => {
 								<div className="payment-card__padding">
 									<select
 										{...register('voucher')}
-										className="payment-form__input"
+										className="payment-form__input payment-form__input--select"
 										onChange={(e) => onChangeVoucher(e)}
 									>
 										<option value=""></option>
-										{apiVoucher.data.map((voucher) => (
+										{apiVoucher.data.map((voucher, index) => (
 											<option
 												key={voucher.voucherCode}
 												value={`${voucher.voucherCode}-${voucher.title}`}
 											>
-												{voucher.description}
+												{index + 1}. {voucher.description}
 											</option>
 										))}
 									</select>
@@ -280,7 +285,7 @@ const PaymentStage = () => {
 								Từ {noi_di} đến {noi_den}
 							</p>
 							<p>{ten_loai}</p>
-							<p>{moment().format('DD/MM/yyyy')}</p>
+							<p>{bookingDateDisplay}</p>
 							<p>Lịch trình linh hoạt</p>
 						</div>
 						<div className="payment-trip__separate ">

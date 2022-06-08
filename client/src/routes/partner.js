@@ -5,7 +5,7 @@ import ManageDrivers from '../views/partner/HandleDriver/ShowDriver';
 import ManageCompanies from '../views/partner/HandleCompany/ShowCompany';
 import ManageTransports from '../views/partner/HandleTransport/ShowTransport';
 import ManageTrips from '../views/partner/HandleTrip/ShowTrip';
-import Satistical from '../views/partner/Satistical';
+import Statistical from '../views/partner/Statistical';
 import Customer from '../views/partner/Customer';
 import ManageBill from '../views/partner/ManageBill';
 
@@ -18,7 +18,7 @@ const PartnerRoute = () => {
 				<Route path="company" element={<ManageCompanies />} />
 				<Route path="transport" element={<ManageTransports />} />
 				<Route path="trip" element={<ManageTrips />} />
-				<Route path="satistical" element={<Satistical />} />
+				<Route path="statistical" element={<Statistical />} />
 				<Route path="customer" element={<Customer />} />
 				<Route path="bill" element={<ManageBill />} />
 			</Route>

@@ -32,6 +32,7 @@ function ReadyStage({ toggleform, data }) {
 			so_luong,
 			ma_chuyen_di: data.ma_chuyen_di,
 			ngay_bat_dau: data.ngay_bat_dau,
+			gio_bat_dau: data.gio_bat_dau.slice(0, 5),
 			noi_di: data.noi_di,
 			noi_den: data.noi_den,
 			ten_loai: data.ten_loai,
@@ -72,7 +73,7 @@ function ReadyStage({ toggleform, data }) {
 								Tổng tiền cho {amountPass} người
 							</p>
 							<h2 className="ready-form__price">
-								{(amountPass * data.don_gia).toLocaleString()}
+								{(amountPass * data.don_gia).toLocaleString()}đ
 							</h2>
 							<p className="ready-form__desc">
 								Giá cuối cùng đã bao gồm thuế, xế, phí cầu đường, đậu xe và thuế

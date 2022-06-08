@@ -59,6 +59,17 @@ const uploadPassInfo2 = (idPass, idTrip, data, token) => {
 	});
 };
 
+const showHistory = (token) => {
+	return axios({
+		method: 'get',
+		url: `${process.env.REACT_APP_HOST_LOCAL}/user/history`,
+		headers: {
+			'content-Type': 'application/json',
+			token: `Bearer ${token}`,
+		},
+	});
+};
+
 export {
 	getSearchResult,
 	registerUser,
@@ -66,4 +77,5 @@ export {
 	logoutUser,
 	uploadPassInfo,
 	uploadPassInfo2,
+	showHistory,
 };
