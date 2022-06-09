@@ -7,9 +7,6 @@ const refreshKey = 'process.env.JWT_REFRESH_KEY';
 let refreshTokens = [];
 
 class UsersController {
-	index(req, res, next) {
-		res.render('stripe');
-	}
 	async getAllBooking(req, res, next) {
 		const noi_di = req.query.noi_di;
 		const noi_den = req.query.noi_den;
@@ -28,29 +25,10 @@ class UsersController {
 					res.json({ result: data.recordset });
 				} else {
 					res.json({ result: [] });
-					// res.json({ result: "Không Tìm Thấy Chuyến Đi" });
 				}
 			});
 	}
 
-	async getBookingId(req, res, next) {
-		const id = req.params.id;
-		// console.log(id);
-		const pool = await conn;
-		const sqlString = `SELECT * FROM chuyen_di c , xe x ,cong_ty t ,loai_phuong_tien l WHERE c.ma_chuyen_di = @ma_chuyen_di AND c.ma_xe=x.ma_xe AND x.ma_loai=l.ma_loai AND x.ma_cong_ty=t.ma_cong_ty`;
-		return await pool
-			.request()
-			.input('ma_chuyen_di', sql.Int, id)
-			.query(sqlString, function (err, data) {
-				if (!err) {
-					res
-						.status(200)
-						.json({ message: 'Tìm Thành Công' + id, result: data.recordset });
-				} else {
-					res.status(500).json({ result: 'Tìm Thất Bại' });
-				}
-			});
-	}
 	// người dùng đặt vé
 	async bookingOrder(req, res, next) {
 		return new Promise(async (resolve, reject) => {
@@ -74,7 +52,6 @@ class UsersController {
 						if (err) {
 							console.log(err);
 						} else {
-							// res.json({ result: data1 });
 							const pool = await conn;
 							const sqlString2 = `SELECT * FROM khach_di`;
 							return await pool
@@ -92,13 +69,6 @@ class UsersController {
 			}
 		});
 	}
-	async getUserOder(req, res, next) {
-		const pool = await conn;
-		const sqlString2 = `SELECT * FROM khach_di`;
-		return await pool.request().query(sqlString2, async function (err, data2) {
-			res.json({ result: data2.recordset.pop() });
-		});
-	}
 	async bookingOrder2(req, res, next) {
 		try {
 			const ma_hoa_don = req.body.ma_hoa_don;
@@ -106,8 +76,6 @@ class UsersController {
 			const ma_chuyen_di = req.params.idChuyen;
 			const email = req.body.email;
 			const tong_tien = req.body.tong_tien;
-			// const accessToken = req.headers.token.split(" ")[1];
-			// const decoded = jwt.verify(accessToken, accessKey);
 			const trang_thai_dat = req.body.trang_thai_dat;
 			const ngay_dat_ve = req.body.ngay_dat_ve;
 			const ngay_bat_dau = req.body.ngay_bat_dau;
@@ -152,36 +120,6 @@ class UsersController {
 		}
 	}
 
-	async updateStatus(req, res) {
-		const trang_thai_dat = 'success';
-		const pool = await conn;
-		const sqlString = `UPDATE hoa_don SET trang_thai_dat =${trang_thai_dat} WHERE ma_hoa_don = @ma_hoa_don`;
-		return await pool
-			.request()
-			.input('ma_hoa_don', sql.Int, req.params.ma_hoa_don)
-			.query(sqlString, async function (err, data) {
-				if (data) {
-					res.status(200).json({ msg: 'Cập nhật thành công', result: data });
-				} else {
-					console.log(err);
-				}
-			});
-	}
-	async cancelBooking(req, res) {
-		try {
-			const sqlString =
-				'SELECT count(*) from ve t WHERE code_ve=? and ngay_bat_dau>=@ngay_bat_dau';
-			const sqlString2 =
-				"UPDATE ve SET trang_thai_dat='CANCELED' WHERE hoa_don=@ma_hoa_don and eamil=@email";
-			const sqlString3 =
-				'SELECT t.ma_chuyen_bay,t.ngay_bat_dau,t.ma_khach_bay,t.loai,0.85*p.tong_tien as refund_amount from ve t,hoa_don p WHERE t.code_ve=? and t.code_ve=p.code_ve';
-			const sqlString4 =
-				'UPDATE chuyen_bay SET so_luong_economy=so_luong_economy+? WHERE ma_chuyen_bay=? AND ngay_bat_dau=?';
-		} catch (err) {
-			console.log(err);
-		}
-	}
-
 	async history(req, res, next) {
 		try {
 			if (req.headers.token) {
@@ -208,31 +146,6 @@ class UsersController {
 		} catch (error) {
 			console.log(error);
 		}
-	}
-
-	// lấy tất cả người dùng ( chỉ test code)
-	show(req, res, next) {
-		User.find({})
-			.then((result) => res.status(200).json(result))
-			.catch(next);
-	}
-
-	// xóa người dùng
-
-	async delete(req, res, next) {
-		const id = req.params.id;
-		const pool = await conn;
-		const sqlString = 'DELETE FROM khach_dat WHERE email =@email ';
-		return await pool
-			.request()
-			.input('email', sql.NVarChar, id)
-			.query(sqlString, function (err, data) {
-				if (!err) {
-					res.json({ result: 'Xóa Thành Công' });
-				} else {
-					res.json({ result: 'Xóa Thất Bại' });
-				}
-			});
 	}
 
 	// tạo user
@@ -284,23 +197,6 @@ class UsersController {
 					console.log(err);
 					res.json('CMND đã tồn tại!!!!');
 				}
-			});
-	}
-	async createPartner(req, res, next) {
-		const salt = await bcrypt.genSalt(10);
-		const hashed = await bcrypt.hash(req.body.pass, salt);
-		const ten = req.body.ten;
-		const partner_id = Math.floor(Math.random() * 100);
-		const pool = await conn;
-		const sqlString =
-			'INSERT INTO isPartner (partner_id,ten,pass) Values (@partner_id,@ten,@pass)';
-		return await pool
-			.request()
-			.input('partner_id', sql.NVarChar, partner_id)
-			.input('ten', sql.NVarChar, ten)
-			.input('pass', sql.NVarChar, hashed)
-			.query(sqlString, function (err, data) {
-				res.status(200).json({ result: data.recordset });
 			});
 	}
 	// login user
@@ -355,43 +251,6 @@ class UsersController {
 							status: 404,
 							msg: 'Email không tồn tại',
 						});
-					}
-				});
-		} else {
-			res.send('Vui lòng nhập tài khoản và mật khẩu');
-		}
-	}
-	async loginPartner(req, res) {
-		const ten = req.body.ten;
-		const pass = req.body.pass;
-		if (ten && pass) {
-			const pool = await conn;
-			const sqlString = 'SELECT * FROM isPartner WHERE ten =@ten';
-			return await pool
-				.request()
-				.input('ten', sql.NVarChar, ten)
-				.query(sqlString, function (err, data) {
-					if (err) {
-						res.send({ err: err });
-					}
-					if (data.recordset.length > 0) {
-						bcrypt.compare(
-							pass,
-							data.recordset[0].pass,
-							function (err, result) {
-								if (result) {
-									const accessToken = jwt.sign(
-										{ ten: data.recordset[0].ten },
-										accessKey,
-										{ expiresIn: '8h' }
-									);
-									const { pass, ...others } = data.recordset[0];
-									res.status(200).json({ ...others, accessToken });
-								} else {
-									res.json({ status: 404, msg: 'Sai tài khoản/mật khẩu' });
-								}
-							}
-						);
 					}
 				});
 		} else {

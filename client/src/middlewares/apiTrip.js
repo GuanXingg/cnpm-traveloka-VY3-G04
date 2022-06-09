@@ -1,13 +1,16 @@
 import axios from 'axios';
 
+const domainHost =
+	process.env.REACT_APP_HOST || process.env.REACT_APP_HOST_LOCAL;
+
 const getAllTrips = () => {
-	return axios.get(`${process.env.REACT_APP_HOST_LOCAL}/trip/getAllTrip`);
+	return axios.get(`${domainHost}/trip/getAllTrip`);
 };
 
 const uploadTrip = (data) => {
 	return axios({
 		method: 'post',
-		url: `${process.env.REACT_APP_HOST_LOCAL}/trip/createTrip`,
+		url: `${domainHost}/trip/createTrip`,
 		headers: { 'content-Type': 'application/json' },
 		data,
 	});
@@ -16,7 +19,7 @@ const uploadTrip = (data) => {
 const edtiTrip = (id, data) => {
 	return axios({
 		method: 'put',
-		url: `${process.env.REACT_APP_HOST_LOCAL}/trip/updateTrip/${id}`,
+		url: `${domainHost}/trip/updateTrip/${id}`,
 		headers: { 'content-Type': 'application/json' },
 		data,
 	});
@@ -25,7 +28,7 @@ const edtiTrip = (id, data) => {
 const deleteTrip = (id) => {
 	return axios({
 		method: 'delete',
-		url: `${process.env.REACT_APP_HOST_LOCAL}/trip/deleteTrip/${id}`,
+		url: `${domainHost}/trip/deleteTrip/${id}`,
 		headers: { 'content-Type': 'application/json' },
 	});
 };

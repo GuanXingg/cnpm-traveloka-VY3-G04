@@ -1,13 +1,16 @@
 import axios from 'axios';
 
+const domainHost =
+	process.env.REACT_APP_HOST || process.env.REACT_APP_HOST_LOCAL;
+
 const getAllTransport = () => {
-	return axios.get(`${process.env.REACT_APP_HOST_LOCAL}/car/getallcar`);
+	return axios.get(`${domainHost}/car/getallcar`);
 };
 
 const uploadTransport = (data) => {
 	return axios({
 		method: 'post',
-		url: `${process.env.REACT_APP_HOST_LOCAL}/car/createCar`,
+		url: `${domainHost}/car/createCar`,
 		headers: { 'content-Type': 'application/json' },
 		data: data,
 	});
@@ -16,7 +19,7 @@ const uploadTransport = (data) => {
 const editTransport = (id, data) => {
 	return axios({
 		method: 'put',
-		url: `${process.env.REACT_APP_HOST_LOCAL}/car/updateCar/${id}`,
+		url: `${domainHost}/car/updateCar/${id}`,
 		headers: { 'content-Type': 'application/json' },
 		data,
 	});
@@ -25,7 +28,7 @@ const editTransport = (id, data) => {
 const deleteTransport = (id) => {
 	return axios({
 		method: 'delete',
-		url: `${process.env.REACT_APP_HOST_LOCAL}/car/deleteCar/${id}`,
+		url: `${domainHost}/car/deleteCar/${id}`,
 		headers: { 'content-Type': 'application/json' },
 	});
 };

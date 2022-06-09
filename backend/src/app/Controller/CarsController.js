@@ -6,9 +6,6 @@ const {
 	querysDriver,
 } = require('../../config/db/sql_query');
 class CarsController {
-	index = async (req, res) => {
-		res.render('car');
-	};
 
 	getAllCar = async (req, res) => {
 		try {
@@ -44,8 +41,6 @@ class CarsController {
 								});
 						}
 					});
-					// res.render('car', {data:data.recordset})
-					// res.json({ result: data.recordset });
 				} else {
 					res.json({ message: 'Không load danh sách xe', error: err.message });
 				}
@@ -55,58 +50,9 @@ class CarsController {
 		}
 	};
 
-	show = async (req, res) => {
-		try {
-			let id = req.params.id;
-			let pool = await conn;
-			let sqlString1 = querysCar.getCarById;
-			let sqlString2 = querysCompany.getAllCompany;
-			let sqlString3 = querysTypeCar.getAllType;
-			let sqlString4 = querysDriver.getAllDriver;
-			return await pool
-				.request()
-				.input('ma_xe', sql.NVarChar, id)
-				.query(sqlString1, async (err, data) => {
-					if (!err) {
-						let car = data.recordset;
-						return await pool
-							.request()
-							.query(sqlString2, async (err2, data2) => {
-								if (!err2) {
-									let company = data2.recordset;
-
-									return await pool
-										.request()
-										.query(sqlString3, async (err3, data3) => {
-											if (!err3) {
-												let typeCar = data3.recordset;
-												return await pool
-													.request()
-													.query(sqlString4, async (err4, data4) => {
-														let driver = data4.recordset;
-														res.json({
-															xe: car,
-															cong_ty: company,
-															loai_phuong_tien: typeCar,
-															tai_xe: driver,
-														});
-													});
-											}
-										});
-								}
-							});
-					} else {
-						res.json({ message: 'Không tồn tại', error: err.message });
-					}
-				});
-		} catch (err) {
-			console.log(err);
-		}
-	};
 
 	createCar = async (req, res) => {
 		try {
-			// return console.log(req.file.firebaseUrl);
 			let pool = await conn;
 			let sqlString = querysCar.createCar;
 			return await pool

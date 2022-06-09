@@ -15,28 +15,6 @@ class DriverController {
     }
   };
 
-  show = async (req, res) => {
-    try {
-      let id = req.params.id;
-      let pool = await conn;
-      let sqlString = querysDriver.getDriverById;
-      return await pool
-        .request()
-        .input("ma_tai_xe", sql.Int, id)
-        .query(sqlString, (err, data) => {
-          if (!err) {
-            res.json({ result: data.recordset });
-          } else {
-            res.json({
-              message: "Không thể tìm kiếm được",
-              error: err.message,
-            });
-          }
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   createDriver = async (req, res) => {
     try {
@@ -73,7 +51,6 @@ class DriverController {
       return await pool
         .request()
         .input("ma_tai_xe", sql.Int, id)
-        // .input("ma_cong_ty", sql.Int, req.body.ma_cong_ty)
         .input("tenTX", sql.NVarChar, req.body.tenTX)
         .input("ngay_sinh", sql.Date, req.body.ngay_sinh)
         .input("sdtTX", sql.NVarChar, req.body.sdtTX)
