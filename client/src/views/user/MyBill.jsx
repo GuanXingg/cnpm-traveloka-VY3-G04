@@ -127,6 +127,8 @@ const NoBill = () => {
 };
 
 const HaveBill = () => {
+	const sessionPUser = JSON.parse(sessionStorage.getItem('userInfo'));
+
 	const [openBill, setOpenBill] = useState(false);
 	const [apiData, setApiData] = useState(initialApiData);
 	console.log('~ apiData', apiData);
