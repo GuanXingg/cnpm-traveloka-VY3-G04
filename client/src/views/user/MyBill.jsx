@@ -4,9 +4,12 @@ import { RiBillLine, RiCheckboxCircleFill } from 'react-icons/ri';
 import { GiCityCar } from 'react-icons/gi';
 import NoBillIcon from '../../assets/icons/cancel.png';
 import { showHistory } from '../../middlewares/apiUser';
+import LoginPopup from '../../components/user/LoginPopup';
 import '../../styles/user/_bill.scss';
+import '../../styles/user/_confirmStage.scss';
 
 const sessionPBill = JSON.parse(sessionStorage.getItem('bill')) || {};
+const sessionPUser = JSON.parse(sessionStorage.getItem('userInfo'));
 
 const { ma_hoa_don, noi_di, tong_tien, trang_thai_dat } = sessionPBill;
 
@@ -22,7 +25,28 @@ const initalBill = {
 
 const OwnBill = () => {
 	const [nav, setNav] = useState(trang_thai_dat === 'success' ? 2 : 1);
+	const [openLogin, setOpenLogin] = useState(false);
 
+	const toggleOpenLogin = () => setOpenLogin(!openLogin);
+
+	if (!sessionPUser?.accessToken) {
+		return (
+			<>
+				<div className="confirm confirm--extentsion">
+					<img src={NoBillIcon} alt="success icon" className="confirm__img" />
+					<h2 className="confirm__txt">Bạn chưa đăng nhập tài khoản</h2>
+					<h3 className="confirm__desc">
+						Vui lòng chuyến đến trang{' '}
+						<span className="confirm__event" onClick={() => toggleOpenLogin()}>
+							Đăng nhập
+						</span>{' '}
+						để sử dụng chức năng
+					</h3>
+				</div>
+				{openLogin && <LoginPopup />}
+			</>
+		);
+	}
 	return (
 		<div className="bill">
 			<div className="bill-sidebar">
@@ -103,8 +127,6 @@ const NoBill = () => {
 };
 
 const HaveBill = () => {
-	const sessionPUser = JSON.parse(sessionStorage.getItem('userInfo'));
-
 	const [openBill, setOpenBill] = useState(false);
 	const [apiData, setApiData] = useState(initialApiData);
 	console.log('~ apiData', apiData);
